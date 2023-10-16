@@ -20,7 +20,8 @@ public class CreditCard {
     @NotBlank(message = "Expiration month must be present")
     private String expMonth;
     @NotNull
-    @Positive(message = "Release year cannot be negative")
+    @Min(value = 2023, message = "Earliest expiration year is 2023")
+    @Max(value = 2099, message = "Latest expiration year is 2099")
     private Integer expYear;
 
     public String toString() {
