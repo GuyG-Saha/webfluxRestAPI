@@ -1,5 +1,6 @@
 package com.reactive.webflux2.controller;
 
+import com.reactive.webflux2.RecordProcessStatus;
 import com.reactive.webflux2.domain.CreditCard;
 import com.reactive.webflux2.service.CreditCardService;
 import lombok.Data;
@@ -31,4 +32,15 @@ public class CreditCardController {
         log.info("Retrieving all credit cards from DB!");
         return creditCardService.getAllCreditCards();
     }
+    @GetMapping("/byStatus")
+    @ResponseStatus(HttpStatus.OK)
+    public Flux<CreditCard> getCreditCardsByProcessStatus(@RequestParam String status) {
+        try {
+            log.info("RequestParam for getCreditCardsByProcessStatus is: ".concat(status));
+            return creditCardService.findCreditCardsByProcessStatus(RecordProcessStatus.valueOf(status));
+        } catch (IllegalArgumentException e) {
+            return Flux.empty();
+        }
+    }
+
 }

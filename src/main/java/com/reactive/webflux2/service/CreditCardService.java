@@ -1,5 +1,6 @@
 package com.reactive.webflux2.service;
 
+import com.reactive.webflux2.RecordProcessStatus;
 import com.reactive.webflux2.domain.CreditCard;
 import com.reactive.webflux2.repository.CreditCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,5 +21,13 @@ public class CreditCardService {
                 .map(cc -> {
                     cc.setCCN(cc.toString());
                     return cc; });
+    }
+    public Flux<CreditCard> findCreditCardsByProcessStatus(RecordProcessStatus status) {
+        return creditCardRepository
+                .findByProcessStatus(status.name())
+                .map(cc -> {
+                    cc.setCCN(cc.toString());
+                    return cc;
+                });
     }
 }

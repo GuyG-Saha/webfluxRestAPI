@@ -23,6 +23,7 @@ public class CreditCard {
     @Min(value = 2023, message = "Earliest expiration year is 2023")
     @Max(value = 2099, message = "Latest expiration year is 2099")
     private Integer expYear;
+    private String processStatus;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
