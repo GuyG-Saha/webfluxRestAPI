@@ -30,4 +30,12 @@ public class CreditCardService {
                     return cc;
                 });
     }
+    public Mono<CreditCard> updateCreditCardProcessStatus(String id, RecordProcessStatus recordProcessStatus) {
+        return creditCardRepository
+                .findById(id)
+                .flatMap(updatedCreditCard -> {
+                    updatedCreditCard.setProcessStatus(recordProcessStatus.name());
+                    return creditCardRepository.save(updatedCreditCard);
+                });
+    }
 }
