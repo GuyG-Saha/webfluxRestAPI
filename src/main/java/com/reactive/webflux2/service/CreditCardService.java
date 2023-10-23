@@ -30,6 +30,15 @@ public class CreditCardService {
                     return cc;
                 });
     }
+    public Flux<CreditCard> processCreditCards() {
+        return creditCardRepository
+                .findByProcessStatus("NOT_PROCESSED")
+                .map(cc -> {
+                    cc.setProcessStatus("PROCESSED");
+                    creditCardRepository.save(cc);
+                    return cc;
+                });
+    }
     public Mono<CreditCard> updateCreditCardProcessStatus(String id, RecordProcessStatus recordProcessStatus) {
         return creditCardRepository
                 .findById(id)
