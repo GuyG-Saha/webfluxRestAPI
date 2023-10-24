@@ -24,7 +24,6 @@ public class CreditCard {
     @Max(value = 2099, message = "Latest expiration year is 2099")
     private Integer expYear;
     private String processStatus;
-
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < CCN.length(); i++) {
