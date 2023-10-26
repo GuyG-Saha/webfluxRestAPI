@@ -21,7 +21,7 @@ public class CreditCardProcessor {
                     return creditCardService.updateCreditCardProcessStatus(cc.getId(), RecordProcessStatus.PROCESSED);
                 })
                 .subscribe();
-        log.info("Processing done");
+        log.info("Finished processing request");
     }
 
 }
