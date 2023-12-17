@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableScheduling
+//@EnableScheduling
 public class Webflux2Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Webflux2Application.class, args);
