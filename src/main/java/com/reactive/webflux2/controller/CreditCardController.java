@@ -43,5 +43,11 @@ public class CreditCardController {
             return Flux.empty();
         }
     }
+    @PutMapping("/{id}")
+    public Mono<ResponseEntity<CreditCard>> updateCreditCardUtil(@PathVariable String id, @RequestBody CreditCard cc) {
+        return creditCardService.updateCreditCard(id ,cc)
+                .map(ResponseEntity.accepted()::body)
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+    }
 
 }
