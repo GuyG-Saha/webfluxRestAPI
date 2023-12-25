@@ -74,10 +74,15 @@ class CreditCardApplicationTests {
 				.bodyValue(newCreditCardInvalidMonth)
 				.exchange()
 				.expectStatus()
-				.isCreated();
+				.isCreated()
+				.expectBody(CreditCard.class)
+				.consumeWith(creditCardEntityExchangeResult -> {
+					var response = creditCardEntityExchangeResult.getResponseBody();
+					assert Objects.nonNull(response);
+				});
 	}
 	@Test
-	void addNewInvalidExpMonthCreditCard() {
+	void addCCInvalidExpMonth() {
 		var newCreditCardInvalidMonth = new CreditCard("123d", "123456******9904",
 				"13", 2023, "NOT_PROCESSED");
 		when(ccServiceMock.addCreditCard(newCreditCardInvalidMonth)).thenReturn(Mono.just(newCreditCardInvalidMonth));
@@ -96,7 +101,7 @@ class CreditCardApplicationTests {
 				});
 	}
 	@Test
-	void addNewInvalidExpYearCreditCard() {
+	void addCCInvalidExpYear() {
 		var newCreditCardInvalidYear = new CreditCard("123d", "123456******9904",
 				"12", -123, "NOT_PROCESSED");
 		when(ccServiceMock.addCreditCard(newCreditCardInvalidYear)).thenReturn(Mono.just(newCreditCardInvalidYear));
@@ -112,6 +117,41 @@ class CreditCardApplicationTests {
 					var response = stringEntityExchangeResult.getResponseBody();
 					assert Objects.nonNull(response);
 					assert Objects.equals(response, "Earliest expiration year is 2023");
+				});
+	}
+	@Test
+	void addInvalidCCN() {
+		var longCCN = new CreditCard("123e", "123456******99042",
+				"10", 2024, "NOT_PROCESSED");
+		var shortCCN = new CreditCard("123e", "123456******999",
+				"10", 2025, "NOT_PROCESSED");
+		when(ccServiceMock.addCreditCard(longCCN)).thenReturn(Mono.just(longCCN));
+		when(ccServiceMock.addCreditCard(shortCCN)).thenReturn(Mono.just(shortCCN));
+		webTestClient
+				.post()
+				.uri(BASE_URL + "/save")
+				.bodyValue(longCCN)
+				.exchange()
+				.expectStatus()
+				.isBadRequest()
+				.expectBody(String.class)
+				.consumeWith(stringEntityExchangeResult -> {
+					var response = stringEntityExchangeResult.getResponseBody();
+					assert Objects.nonNull(response);
+					assert Objects.equals(response, "CCN length must be 16");
+				});
+		webTestClient
+				.post()
+				.uri(BASE_URL + "/save")
+				.bodyValue(shortCCN)
+				.exchange()
+				.expectStatus()
+				.isBadRequest()
+				.expectBody(String.class)
+				.consumeWith(stringEntityExchangeResult -> {
+					var response = stringEntityExchangeResult.getResponseBody();
+					assert Objects.nonNull(response);
+					assert Objects.equals(response, "CCN length must be 16");
 				});
 	}
 }
