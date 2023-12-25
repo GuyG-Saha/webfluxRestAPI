@@ -38,4 +38,15 @@ public class CreditCardService {
                     return creditCardRepository.save(updatedCreditCard);
                 });
     }
+    public Mono<CreditCard> updateCreditCard(String id, CreditCard cc) {
+        return creditCardRepository
+                .findById(id)
+                .flatMap(updatedCreditCard -> {
+                    updatedCreditCard.setCCN(cc.getCCN());
+                    updatedCreditCard.setExpYear(cc.getExpYear());
+                    updatedCreditCard.setExpMonth(cc.getExpMonth());
+                    updatedCreditCard.setProcessStatus(cc.getProcessStatus());
+                    return creditCardRepository.save(updatedCreditCard);
+                });
+    }
 }
