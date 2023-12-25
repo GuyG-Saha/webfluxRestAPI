@@ -79,6 +79,7 @@ class CreditCardApplicationTests {
 				.consumeWith(creditCardEntityExchangeResult -> {
 					var response = creditCardEntityExchangeResult.getResponseBody();
 					assert Objects.nonNull(response);
+					assert Objects.equals(response.getCCN(), "123456******9904");
 				});
 	}
 	@Test
@@ -148,6 +149,26 @@ class CreditCardApplicationTests {
 					var response = stringEntityExchangeResult.getResponseBody();
 					assert Objects.nonNull(response);
 					assert Objects.equals(response, "CCN length must be 16");
+				});
+	}
+	@Test
+	void updateCreditCardStatusToProcessing() {
+		var id = "123c";
+		var updatedCC = new CreditCard("123c", "123456******9903",
+				"11", 2024, "PROCESSING");
+		when(ccServiceMock.updateCreditCard(id, updatedCC)).thenReturn(Mono.just(updatedCC));
+		webTestClient
+				.put()
+				.uri(BASE_URL + "/" + id)
+				.bodyValue(updatedCC)
+				.exchange()
+				.expectStatus()
+				.isAccepted()
+				.expectBody(CreditCard.class)
+				.consumeWith(creditCardEntityExchangeResult -> {
+					var response = creditCardEntityExchangeResult.getResponseBody();
+					assert Objects.nonNull(response);
+					assert Objects.equals(response.getProcessStatus(), "PROCESSING");
 				});
 	}
 }
