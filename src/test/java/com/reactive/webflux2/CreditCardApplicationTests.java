@@ -65,13 +65,13 @@ class CreditCardApplicationTests {
 	}
 	@Test
 	void addNewCreditCard() {
-		var newCreditCardInvalidMonth = new CreditCard("123d", "123456******9904",
+		var newCreditCard = new CreditCard("123d", "123456******9904",
 				"12", 2023, "NOT_PROCESSED");
-		when(ccServiceMock.addCreditCard(newCreditCardInvalidMonth)).thenReturn(Mono.just(newCreditCardInvalidMonth));
+		when(ccServiceMock.addCreditCard(newCreditCard)).thenReturn(Mono.just(newCreditCard));
 		webTestClient
 				.post()
 				.uri(BASE_URL + "/save")
-				.bodyValue(newCreditCardInvalidMonth)
+				.bodyValue(newCreditCard)
 				.exchange()
 				.expectStatus()
 				.isCreated()
@@ -85,7 +85,6 @@ class CreditCardApplicationTests {
 	void addCCInvalidExpMonth() {
 		var newCreditCardInvalidMonth = new CreditCard("123d", "123456******9904",
 				"13", 2023, "NOT_PROCESSED");
-		when(ccServiceMock.addCreditCard(newCreditCardInvalidMonth)).thenReturn(Mono.just(newCreditCardInvalidMonth));
 		webTestClient
 				.post()
 				.uri(BASE_URL + "/save")
@@ -104,7 +103,6 @@ class CreditCardApplicationTests {
 	void addCCInvalidExpYear() {
 		var newCreditCardInvalidYear = new CreditCard("123d", "123456******9904",
 				"12", -123, "NOT_PROCESSED");
-		when(ccServiceMock.addCreditCard(newCreditCardInvalidYear)).thenReturn(Mono.just(newCreditCardInvalidYear));
 		webTestClient
 				.post()
 				.uri(BASE_URL + "/save")
@@ -125,8 +123,6 @@ class CreditCardApplicationTests {
 				"10", 2024, "NOT_PROCESSED");
 		var shortCCN = new CreditCard("123e", "123456******999",
 				"10", 2025, "NOT_PROCESSED");
-		when(ccServiceMock.addCreditCard(longCCN)).thenReturn(Mono.just(longCCN));
-		when(ccServiceMock.addCreditCard(shortCCN)).thenReturn(Mono.just(shortCCN));
 		webTestClient
 				.post()
 				.uri(BASE_URL + "/save")
