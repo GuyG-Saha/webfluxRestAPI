@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/cc")
 @Slf4j
 public class CreditCardController {
     @Autowired
@@ -26,7 +27,7 @@ public class CreditCardController {
         log.info("CreditCard: " + creditCard);
         return creditCardService.addCreditCard(creditCard);
     }
-    @GetMapping("/all")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     public Flux<CreditCard> getAllCreditCards() {
         log.info("Retrieving all credit cards from DB!");
@@ -41,6 +42,12 @@ public class CreditCardController {
         } catch (IllegalArgumentException e) {
             return Flux.empty();
         }
+    }
+    @PutMapping("/{id}")
+    public Mono<ResponseEntity<CreditCard>> updateCreditCardUtil(@PathVariable String id, @RequestBody CreditCard cc) {
+        return creditCardService.updateCreditCard(id ,cc)
+                .map(ResponseEntity.accepted()::body)
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
 }
