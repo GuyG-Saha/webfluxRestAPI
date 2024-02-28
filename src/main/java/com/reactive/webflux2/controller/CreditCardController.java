@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/cc")
@@ -29,18 +30,17 @@ public class CreditCardController {
     }
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public Flux<CreditCard> getAllCreditCards() {
-        log.info("Retrieving all credit cards from DB!");
-        return creditCardService.getAllCreditCards();
-    }
-    @GetMapping("/byStatus")
-    @ResponseStatus(HttpStatus.OK)
-    public Flux<CreditCard> getCreditCardsByProcessStatus(@RequestParam String status) {
-        try {
-            log.info("RequestParam for getCreditCardsByProcessStatus is: ".concat(status));
-            return creditCardService.findCreditCardsByProcessStatus(RecordProcessStatus.valueOf(status));
-        } catch (IllegalArgumentException e) {
-            return Flux.empty();
+    public Flux<CreditCard> getAllCreditCards(@RequestParam(required = false) String status) {
+        if (Objects.nonNull(status)) {
+            try {
+                log.info("RequestParam for getCreditCardsByProcessStatus is: ".concat(status));
+                return creditCardService.findCreditCardsByProcessStatus(RecordProcessStatus.valueOf(status));
+            } catch (IllegalArgumentException e) {
+                return Flux.empty();
+            }
+        } else {
+            log.info("Retrieving all credit cards from DB!");
+            return creditCardService.getAllCreditCards();
         }
     }
     @PutMapping("/{id}")
