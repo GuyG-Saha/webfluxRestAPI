@@ -56,7 +56,11 @@ class CreditCardApplicationTests {
 		when(ccServiceMock.findCreditCardsByProcessStatus(status)).thenReturn(Flux.just(processedCard));
 		webTestClient
 				.get()
-				.uri(BASE_URL + "/byStatus?status=PROCESSED")
+				.uri(uriBuilder ->
+					uriBuilder
+							.path(BASE_URL)
+							.queryParam("status", "PROCESSED")
+							.build())
 				.exchange()
 				.expectStatus()
 				.is2xxSuccessful()
