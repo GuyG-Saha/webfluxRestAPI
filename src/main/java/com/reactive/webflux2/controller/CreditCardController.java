@@ -3,7 +3,6 @@ package com.reactive.webflux2.controller;
 import com.reactive.webflux2.RecordProcessStatus;
 import com.reactive.webflux2.domain.CreditCard;
 import com.reactive.webflux2.service.CreditCardService;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,13 @@ public class CreditCardController {
     public Mono<ResponseEntity<CreditCard>> updateCreditCardUtil(@PathVariable String id, @RequestBody CreditCard cc) {
         return creditCardService.updateCreditCard(id ,cc)
                 .map(ResponseEntity.accepted()::body)
-                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()))
+                .onErrorResume(e -> {
+                    if (e instanceof RuntimeException && e.getMessage().equals("Optimistic Lock error!")) {
+                        return Mono.error(new RuntimeException("Update failed due to concurrent modification", e));
+                    }
+                    return Mono.error(e);
+                });
     }
 
 }
