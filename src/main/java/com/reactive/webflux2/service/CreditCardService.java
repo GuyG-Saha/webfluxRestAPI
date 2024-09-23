@@ -4,9 +4,12 @@ import com.reactive.webflux2.RecordProcessStatus;
 import com.reactive.webflux2.domain.CreditCard;
 import com.reactive.webflux2.repository.CreditCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 @Service
 public class CreditCardService {
@@ -42,11 +45,20 @@ public class CreditCardService {
         return creditCardRepository
                 .findById(id)
                 .flatMap(updatedCreditCard -> {
+                    if (Objects.isNull(updatedCreditCard.getVersion())) {
+                        updatedCreditCard.setVersion(1L);
+                    }
                     updatedCreditCard.setCCN(cc.getCCN());
                     updatedCreditCard.setExpYear(cc.getExpYear());
                     updatedCreditCard.setExpMonth(cc.getExpMonth());
                     updatedCreditCard.setProcessStatus(cc.getProcessStatus());
-                    return creditCardRepository.save(updatedCreditCard);
+                    return creditCardRepository.save(updatedCreditCard)
+                            .onErrorResume(e -> {
+                                if (e instanceof OptimisticLockingFailureException) {
+                                    return Mono.error(new RuntimeException("Optimistic Lock error!", e));
+                                }
+                                return Mono.error(e);
+                            });
                 });
     }
 }

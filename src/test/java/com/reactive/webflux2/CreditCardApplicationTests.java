@@ -31,11 +31,11 @@ class CreditCardApplicationTests {
 	static void init() {
 		creditCards = List.of(
 				new CreditCard("123a", "123456******9901",
-						"01", 2025, "PROCESSED"),
+						"01", 2025, "PROCESSED", 1L),
 				new CreditCard("123b", "123456******9902",
-						"04", 2024, "NOT_PROCESSED"),
+						"04", 2024, "NOT_PROCESSED", 1L),
 				new CreditCard("123c", "123456******9903",
-						"11", 2024, "NOT_PROCESSED"));
+						"11", 2024, "NOT_PROCESSED", 1L));
 	}
 	@Test
 	void getAllCards() {
@@ -70,7 +70,7 @@ class CreditCardApplicationTests {
 	@Test
 	void addNewCreditCard() {
 		var newCreditCard = new CreditCard("123d", "123456******9904",
-				"12", 2023, "NOT_PROCESSED");
+				"12", 2023, "NOT_PROCESSED", 1L);
 		when(ccServiceMock.addCreditCard(newCreditCard)).thenReturn(Mono.just(newCreditCard));
 		webTestClient
 				.post()
@@ -89,7 +89,7 @@ class CreditCardApplicationTests {
 	@Test
 	void addCCInvalidExpMonth() {
 		var newCreditCardInvalidMonth = new CreditCard("123d", "123456******9904",
-				"13", 2023, "NOT_PROCESSED");
+				"13", 2023, "NOT_PROCESSED", 1L);
 		webTestClient
 				.post()
 				.uri(BASE_URL + "/save")
@@ -107,7 +107,7 @@ class CreditCardApplicationTests {
 	@Test
 	void addCCInvalidExpYear() {
 		var newCreditCardInvalidYear = new CreditCard("123d", "123456******9904",
-				"12", -123, "NOT_PROCESSED");
+				"12", -123, "NOT_PROCESSED", 1L);
 		webTestClient
 				.post()
 				.uri(BASE_URL + "/save")
@@ -125,9 +125,9 @@ class CreditCardApplicationTests {
 	@Test
 	void addInvalidCCN() {
 		var longCCN = new CreditCard("123e", "123456******99042",
-				"10", 2024, "NOT_PROCESSED");
+				"10", 2024, "NOT_PROCESSED", 1L);
 		var shortCCN = new CreditCard("123e", "123456******999",
-				"10", 2025, "NOT_PROCESSED");
+				"10", 2025, "NOT_PROCESSED", 1L);
 		webTestClient
 				.post()
 				.uri(BASE_URL + "/save")
@@ -159,7 +159,7 @@ class CreditCardApplicationTests {
 	void updateCreditCardStatusToProcessing() {
 		var id = "123c";
 		var updatedCC = new CreditCard("123c", "123456******9903",
-				"11", 2024, "PROCESSING");
+				"11", 2024, "PROCESSING", 1L);
 		when(ccServiceMock.updateCreditCard(id, updatedCC)).thenReturn(Mono.just(updatedCC));
 		webTestClient
 				.put()
